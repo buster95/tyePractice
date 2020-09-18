@@ -8,8 +8,22 @@
 name: servicesmongo # application name
 # registry: exampleuser # dockerhub username or container registry hostname
 
+ingress:
+  - name: ingress
+    bindings:
+      - port: 5000
+    rules:
+      - path: /userapi
+        service: user
+      - path: /productapi
+        service: product
+
 # define multiple services here
 services:
+  # - name: gateway
+  #   project: ./gateway/gateway.csproj
+  #   bindings:
+  #     - port: 5000
   - name: user
     project: ./userservice/userservice.csproj
     bindings:
@@ -28,7 +42,7 @@ services:
         value: 123456
     bindings:
       - port: 27018
-        connectionString: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${host}:${port}"
+        connectionString: "mongodb://root:123456@${host}:${port}"
   - name: mongo2
     image: mongo:4.2.6
     args: "--port 27019"

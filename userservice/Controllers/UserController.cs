@@ -6,7 +6,7 @@ using userservice.Interfaces;
 using userservice.Models;
 
 namespace userservice.Controllers {
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
     public class UserController : Controller {
         private IUserRepository userRepo;
 

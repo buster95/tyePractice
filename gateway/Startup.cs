@@ -10,10 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using userservice.Interfaces;
-using userservice.Repositories;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
-namespace userservice {
+namespace gateway {
     public class Startup {
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
@@ -24,28 +24,20 @@ namespace userservice {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllers();
-
-            services.AddTransient<IUserRepository>(x =>
-                new UserRepository(Configuration.GetConnectionString("mongo1"), "admin1"));
+            services.AddOcelot(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
-
-            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseFileServer();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => {
-                endpoints.MapControllers();
-            });
+            await app.UseOcelot();
         }
     }
 }
